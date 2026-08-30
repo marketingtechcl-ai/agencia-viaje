@@ -1,0 +1,17 @@
+
+> agencia-viajes-portal@0.1.0 dev
+> next dev
+
+▲ Next.js 16.3.3 (Turbopack)
+- Local:         http://localhost:3000
+- Network:       http://192.0.2.2:3000
+- Environments: .env.local
+✓ Ready in 505ms
+✓ Running next.config.mjs took 29ms
+
+○ Compiling /login ...
+ GET /login 200 in 4.2s (next.js: 3.7s, proxy.ts: 297ms, application-code: 276ms)
+ GET /register 200 in 469ms (next.js: 334ms, proxy.ts: 29ms, application-code: 106ms)
+ GET / 200 in 760ms (next.js: 633ms, proxy.ts: 7ms, application-code: 120ms)
+ GET /login 200 in 65ms (next.js: 10ms, proxy.ts: 11ms, application-code: 44ms)
+[?25h
