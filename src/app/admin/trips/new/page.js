@@ -20,20 +20,29 @@ export default async function NewTripPage() {
       >
         <div>
           <label className="block text-sm font-medium text-zinc-700">
-            Cliente
+            Viajero(s)
           </label>
-          <select
-            name="client_id"
-            required
-            className="mt-1 w-full rounded-lg border border-zinc-300 px-3 py-2"
-          >
-            <option value="">Selecciona un cliente…</option>
+          <div className="mt-1 max-h-48 space-y-2 overflow-y-auto rounded-lg border border-zinc-300 p-3">
             {clients?.map((c) => (
-              <option key={c.id} value={c.id}>
+              <label
+                key={c.id}
+                className="flex items-center gap-2 text-sm text-zinc-700"
+              >
+                <input
+                  type="checkbox"
+                  name="client_ids"
+                  value={c.id}
+                  className="rounded border-zinc-300"
+                />
                 {c.full_name || "(sin nombre)"}
-              </option>
+              </label>
             ))}
-          </select>
+          </div>
+          <p className="mt-1 text-xs text-zinc-500">
+            Elige uno o varios viajeros. Si eliges varios, se crea un viaje
+            independiente para cada uno con los mismos datos. Luego podrás
+            armar el itinerario una sola vez y copiarlo a los demás.
+          </p>
           {!clients?.length && (
             <p className="mt-1 text-xs text-amber-600">
               Todavía no hay clientes registrados. Pide a tu cliente que cree su

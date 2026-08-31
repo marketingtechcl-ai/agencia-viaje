@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import ItineraryManager from "./ItineraryManager";
 import PhotoUploader from "./PhotoUploader";
+import CopyItineraryForm from "./CopyItineraryForm";
 
 export default async function AdminTripPage({ params }) {
   const { id } = await params;
@@ -28,6 +29,18 @@ export default async function AdminTripPage({ params }) {
     .eq("trip_id", id)
     .order("uploaded_at", { ascending: false });
 
+  const { data: otherTripRows } = await supabase
+    .from("trips")
+    .select("id, title, profiles:client_id(full_name)")
+    .neq("id", id)
+    .order("title");
+
+  const otherTrips = (otherTripRows || []).map((t) => ({
+    id: t.id,
+    title: t.title,
+    clientName: t.profiles?.full_name || "(sin nombre)",
+  }));
+
   const photos = (photoRows || []).map((p) => ({
     ...p,
     url: supabase.storage.from("trip-photos").getPublicUrl(p.storage_path)
@@ -52,6 +65,7 @@ export default async function AdminTripPage({ params }) {
         <h2 className="text-lg font-semibold text-zinc-800">Itinerario</h2>
         <div className="mt-3">
           <ItineraryManager tripId={id} items={items} />
+          <CopyItineraryForm sourceTripId={id} otherTrips={otherTrips} />
         </div>
       </section>
 

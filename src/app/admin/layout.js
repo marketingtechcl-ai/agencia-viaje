@@ -15,7 +15,6 @@ export default async function AdminLayout({ children }) {
           Panel de administrador
         </a>
         <div className="flex items-center gap-4">
-          <span className="text-sm text-zinc-500">{profile.email}</span>
           <LogoutButton />
         </div>
       </header>
