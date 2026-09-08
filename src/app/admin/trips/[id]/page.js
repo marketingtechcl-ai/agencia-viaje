@@ -4,6 +4,7 @@ import ItineraryManager from "./ItineraryManager";
 import PhotoUploader from "./PhotoUploader";
 import CopyItineraryForm from "./CopyItineraryForm";
 import TravelersManager from "./TravelersManager";
+import TripHeader from "./TripHeader";
 
 export default async function AdminTripPage({ params }) {
   const { id } = await params;
@@ -78,14 +79,7 @@ export default async function AdminTripPage({ params }) {
       <a href="/admin" className="text-sm text-brand hover:underline">
         ← Todos los viajes
       </a>
-      <h1 className="mt-2 font-heading text-2xl font-bold text-foreground">
-        {trip.title}
-      </h1>
-      <p className="text-zinc-500">
-        {travelerNames} · {trip.destination}
-        {trip.start_date &&
-          ` · ${trip.start_date} al ${trip.end_date || trip.start_date}`}
-      </p>
+      <TripHeader trip={trip} travelerNames={travelerNames} />
 
       <section className="mt-6">
         <TravelersManager

@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
+import DeleteTripButton from "./DeleteTripButton";
 
 const STATUS_STYLES = {
   upcoming: "bg-brand/10 text-brand",
@@ -48,25 +49,35 @@ export default async function AdminDashboard() {
                 .join(", ") || "Sin viajero asignado";
 
             return (
-              <a
+              <div
                 key={trip.id}
-                href={`/admin/trips/${trip.id}`}
-                className="flex items-center justify-between px-5 py-4 hover:bg-zinc-50"
+                className="flex items-center justify-between gap-4 px-5 py-4 hover:bg-zinc-50"
               >
-                <div>
-                  <p className="font-medium text-zinc-900">{trip.title}</p>
-                  <p className="text-sm text-zinc-500">
+                <Link href={`/admin/trips/${trip.id}`} className="min-w-0 flex-1">
+                  <p className="truncate font-medium text-zinc-900">
+                    {trip.title}
+                  </p>
+                  <p className="truncate text-sm text-zinc-500">
                     {travelerNames} · {trip.destination}
                   </p>
+                </Link>
+                <div className="flex shrink-0 items-center gap-4">
+                  <span
+                    className={`rounded-full px-3 py-1 text-xs font-semibold ${
+                      STATUS_STYLES[trip.status] || STATUS_STYLES.upcoming
+                    }`}
+                  >
+                    {STATUS_LABELS[trip.status] || trip.status}
+                  </span>
+                  <Link
+                    href={`/admin/trips/${trip.id}`}
+                    className="text-sm font-medium text-brand hover:underline"
+                  >
+                    Editar
+                  </Link>
+                  <DeleteTripButton tripId={trip.id} tripTitle={trip.title} />
                 </div>
-                <span
-                  className={`rounded-full px-3 py-1 text-xs font-semibold ${
-                    STATUS_STYLES[trip.status] || STATUS_STYLES.upcoming
-                  }`}
-                >
-                  {STATUS_LABELS[trip.status] || trip.status}
-                </span>
-              </a>
+              </div>
             );
           })
         ) : (
