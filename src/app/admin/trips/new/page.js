@@ -13,11 +13,14 @@ export default async function NewTripPage() {
 
   return (
     <div className="mx-auto max-w-lg">
-      <h1 className="text-2xl font-semibold text-brand-dark">Nuevo viaje</h1>
+      <p className="eyebrow">Panel de administrador</p>
+      <h1 className="mt-1 font-heading text-2xl font-bold text-foreground">
+        Nuevo viaje
+      </h1>
 
       <form
         action={createTrip}
-        className="mt-6 space-y-4 rounded-xl border border-zinc-200 bg-white p-6"
+        className="mt-6 space-y-4 rounded-2xl border border-zinc-200 bg-white p-6"
       >
         <div>
           <label className="block text-sm font-medium text-zinc-700">

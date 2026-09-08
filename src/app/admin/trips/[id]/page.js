@@ -78,7 +78,7 @@ export default async function AdminTripPage({ params }) {
       <a href="/admin" className="text-sm text-brand hover:underline">
         ← Todos los viajes
       </a>
-      <h1 className="mt-2 text-2xl font-semibold text-brand-dark">
+      <h1 className="mt-2 font-heading text-2xl font-bold text-foreground">
         {trip.title}
       </h1>
       <p className="text-zinc-500">
@@ -96,7 +96,7 @@ export default async function AdminTripPage({ params }) {
       </section>
 
       <section className="mt-8">
-        <h2 className="text-lg font-semibold text-zinc-800">Itinerario</h2>
+        <h2 className="font-heading text-lg font-bold text-foreground">Itinerario</h2>
         <div className="mt-3">
           <ItineraryManager tripId={id} items={items} />
           <CopyItineraryForm sourceTripId={id} otherTrips={otherTrips} />
@@ -104,7 +104,7 @@ export default async function AdminTripPage({ params }) {
       </section>
 
       <section className="mt-10">
-        <h2 className="text-lg font-semibold text-zinc-800">Fotos</h2>
+        <h2 className="font-heading text-lg font-bold text-foreground">Fotos</h2>
         <div className="mt-3">
           <PhotoUploader tripId={id} photos={photos} />
         </div>

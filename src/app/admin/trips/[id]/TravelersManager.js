@@ -34,7 +34,7 @@ export default function TravelersManager({ tripId, travelers, availableClients }
   }
 
   return (
-    <div className="rounded-lg border border-zinc-200 bg-white p-4">
+    <div className="rounded-2xl border border-zinc-200 bg-white p-4">
       <p className="text-sm font-medium text-zinc-700">Viajeros de este viaje</p>
 
       <ul className="mt-2 space-y-1">
@@ -80,7 +80,7 @@ export default function TravelersManager({ tripId, travelers, availableClients }
             type="button"
             onClick={handleAdd}
             disabled={isPending || !selected}
-            className="rounded-lg bg-brand px-3 py-2 text-sm font-medium text-white hover:bg-brand-dark disabled:opacity-60"
+            className="rounded-full bg-brand px-4 py-2 text-sm font-medium text-white hover:bg-brand-dark disabled:opacity-60"
           >
             {isPending ? "…" : "Agregar"}
           </button>

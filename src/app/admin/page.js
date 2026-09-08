@@ -1,6 +1,18 @@
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 
+const STATUS_STYLES = {
+  upcoming: "bg-brand/10 text-brand",
+  active: "bg-accent text-brand-dark",
+  completed: "bg-zinc-100 text-zinc-500",
+};
+
+const STATUS_LABELS = {
+  upcoming: "Próximo",
+  active: "En curso",
+  completed: "Completado",
+};
+
 export default async function AdminDashboard() {
   const supabase = await createClient();
 
@@ -12,16 +24,21 @@ export default async function AdminDashboard() {
   return (
     <div className="mx-auto max-w-4xl">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-semibold text-brand-dark">Viajes</h1>
+        <div>
+          <p className="eyebrow">Panel de administrador</p>
+          <h1 className="mt-1 font-heading text-2xl font-bold text-foreground">
+            Viajes
+          </h1>
+        </div>
         <Link
           href="/admin/trips/new"
-          className="rounded-lg bg-brand px-4 py-2 text-sm font-medium text-white hover:bg-brand-dark"
+          className="rounded-full bg-brand px-5 py-2.5 text-sm font-medium text-white hover:bg-brand-dark"
         >
           + Nuevo viaje
         </Link>
       </div>
 
-      <div className="mt-6 divide-y divide-zinc-200 rounded-xl border border-zinc-200 bg-white">
+      <div className="mt-6 divide-y divide-zinc-200 rounded-2xl border border-zinc-200 bg-white">
         {trips?.length ? (
           trips.map((trip) => {
             const travelerNames =
@@ -42,8 +59,12 @@ export default async function AdminDashboard() {
                     {travelerNames} · {trip.destination}
                   </p>
                 </div>
-                <span className="rounded-full bg-zinc-100 px-3 py-1 text-xs font-medium capitalize text-zinc-600">
-                  {trip.status}
+                <span
+                  className={`rounded-full px-3 py-1 text-xs font-semibold ${
+                    STATUS_STYLES[trip.status] || STATUS_STYLES.upcoming
+                  }`}
+                >
+                  {STATUS_LABELS[trip.status] || trip.status}
                 </span>
               </a>
             );

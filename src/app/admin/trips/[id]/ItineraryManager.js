@@ -20,7 +20,7 @@ function EditItemForm({ tripId, item, onDone }) {
   return (
     <form
       action={handleSubmit}
-      className="w-full space-y-3 rounded-lg border border-brand/40 bg-brand/5 p-4"
+      className="w-full space-y-3 rounded-2xl border border-brand/40 bg-brand/5 p-4"
     >
       <div className="grid grid-cols-2 gap-3">
         <input
@@ -61,7 +61,7 @@ function EditItemForm({ tripId, item, onDone }) {
         <button
           type="submit"
           disabled={isPending}
-          className="rounded-lg bg-brand px-4 py-2 text-sm font-medium text-white hover:bg-brand-dark disabled:opacity-60"
+          className="rounded-full bg-brand px-4 py-2 text-sm font-medium text-white hover:bg-brand-dark disabled:opacity-60"
         >
           {isPending ? "Guardando…" : "Guardar cambios"}
         </button>
@@ -69,7 +69,7 @@ function EditItemForm({ tripId, item, onDone }) {
           type="button"
           onClick={onDone}
           disabled={isPending}
-          className="rounded-lg border border-zinc-300 px-4 py-2 text-sm font-medium text-zinc-600 hover:bg-zinc-50"
+          className="rounded-full border border-zinc-300 px-4 py-2 text-sm font-medium text-zinc-600 hover:bg-zinc-50"
         >
           Cancelar
         </button>
@@ -106,7 +106,7 @@ export default function ItineraryManager({ tripId, items }) {
             ) : (
               <li
                 key={item.id}
-                className="flex items-start justify-between rounded-lg border border-zinc-200 bg-white p-4"
+                className="flex items-start justify-between rounded-2xl border border-zinc-200 bg-white p-4"
               >
                 <div>
                   <p className="text-xs font-medium uppercase tracking-wide text-brand">
@@ -166,7 +166,7 @@ export default function ItineraryManager({ tripId, items }) {
       <form
         ref={formRef}
         action={handleSubmit}
-        className="mt-6 space-y-3 rounded-lg border border-dashed border-zinc-300 p-4"
+        className="mt-6 space-y-3 rounded-2xl border border-dashed border-zinc-300 p-4"
       >
         <p className="text-sm font-medium text-zinc-700">
           Agregar punto al itinerario
@@ -204,7 +204,7 @@ export default function ItineraryManager({ tripId, items }) {
         <button
           type="submit"
           disabled={isPending}
-          className="rounded-lg bg-brand px-4 py-2 text-sm font-medium text-white hover:bg-brand-dark disabled:opacity-60"
+          className="rounded-full bg-brand px-4 py-2 text-sm font-medium text-white hover:bg-brand-dark disabled:opacity-60"
         >
           {isPending ? "Agregando…" : "Agregar"}
         </button>

@@ -1,6 +1,18 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 
+const STATUS_STYLES = {
+  upcoming: "bg-brand/10 text-brand",
+  active: "bg-accent text-brand-dark",
+  completed: "bg-zinc-100 text-zinc-500",
+};
+
+const STATUS_LABELS = {
+  upcoming: "Próximo",
+  active: "En curso",
+  completed: "Completado",
+};
+
 export default async function PortalPage() {
   const supabase = await createClient();
 
@@ -15,9 +27,12 @@ export default async function PortalPage() {
 
   return (
     <div className="mx-auto max-w-2xl">
-      <h1 className="text-2xl font-semibold text-brand-dark">Tus viajes</h1>
+      <p className="eyebrow">Mi viaje</p>
+      <h1 className="mt-1 font-heading text-2xl font-bold text-foreground">
+        Tus viajes
+      </h1>
 
-      <div className="mt-6 divide-y divide-zinc-200 rounded-xl border border-zinc-200 bg-white">
+      <div className="mt-6 divide-y divide-zinc-200 rounded-2xl border border-zinc-200 bg-white">
         {trips?.length ? (
           trips.map((trip) => (
             <a
@@ -29,8 +44,12 @@ export default async function PortalPage() {
                 <p className="font-medium text-zinc-900">{trip.title}</p>
                 <p className="text-sm text-zinc-500">{trip.destination}</p>
               </div>
-              <span className="rounded-full bg-zinc-100 px-3 py-1 text-xs font-medium capitalize text-zinc-600">
-                {trip.status}
+              <span
+                className={`rounded-full px-3 py-1 text-xs font-semibold ${
+                  STATUS_STYLES[trip.status] || STATUS_STYLES.upcoming
+                }`}
+              >
+                {STATUS_LABELS[trip.status] || trip.status}
               </span>
             </a>
           ))

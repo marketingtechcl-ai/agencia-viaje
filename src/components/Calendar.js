@@ -40,7 +40,7 @@ export default function Calendar({ items = [], initialMonth }) {
     : [];
 
   return (
-    <div className="rounded-xl border border-zinc-200 bg-white p-4">
+    <div className="rounded-2xl border border-zinc-200 bg-white p-4">
       <div className="flex items-center justify-between">
         <button
           onClick={() => setMonth(subMonths(month, 1))}
@@ -77,17 +77,17 @@ export default function Calendar({ items = [], initialMonth }) {
               key={iso}
               onClick={() => setSelected(hasItem ? iso : null)}
               className={[
-                "flex h-10 flex-col items-center justify-center rounded-lg text-sm",
+                "flex h-10 flex-col items-center justify-center rounded-full text-sm",
                 inMonth ? "text-zinc-800" : "text-zinc-300",
                 isSelected ? "bg-brand text-white" : hasItem ? "bg-brand/10" : "",
-                hasItem && !isSelected ? "font-semibold text-brand-dark" : "",
+                hasItem && !isSelected ? "font-semibold text-brand" : "",
               ].join(" ")}
             >
               {format(d, "d")}
               {hasItem && (
                 <span
                   className={`mt-0.5 h-1 w-1 rounded-full ${
-                    isSelected ? "bg-white" : "bg-brand"
+                    isSelected ? "bg-accent" : "bg-brand"
                   }`}
                 />
               )}

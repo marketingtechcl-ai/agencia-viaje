@@ -51,7 +51,7 @@ export default function PhotoUploader({ tripId, photos }) {
 
   return (
     <div>
-      <label className="inline-flex cursor-pointer items-center rounded-lg bg-brand px-4 py-2 text-sm font-medium text-white hover:bg-brand-dark">
+      <label className="inline-flex cursor-pointer items-center rounded-full bg-brand px-5 py-2.5 text-sm font-medium text-white hover:bg-brand-dark">
         {uploading ? "Subiendo…" : "+ Subir fotos"}
         <input
           type="file"
