@@ -1,17 +1,16 @@
 import { notFound } from "next/navigation";
-import { createClient, getProfile } from "@/lib/supabase/server";
+import { createClient } from "@/lib/supabase/server";
 import Calendar from "@/components/Calendar";
 
 export default async function ClientTripPage({ params }) {
   const { id } = await params;
-  const profile = await getProfile();
   const supabase = await createClient();
 
+  // RLS ya limita esto a los viajes del cliente que tiene la sesión abierta.
   const { data: trip } = await supabase
     .from("trips")
     .select("*")
     .eq("id", id)
-    .eq("client_id", profile.id)
     .single();
 
   if (!trip) notFound();

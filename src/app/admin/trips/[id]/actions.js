@@ -86,3 +86,40 @@ export async function copyItineraryToTrips(sourceTripId, targetTripIds) {
     revalidatePath(`/portal/trips/${tripId}`);
   });
 }
+
+export async function addTraveler(tripId, clientId) {
+  const supabase = await createClient();
+
+  if (!clientId) {
+    throw new Error("Elige un viajero para agregar.");
+  }
+
+  const { error } = await supabase
+    .from("trip_travelers")
+    .insert({ trip_id: tripId, client_id: clientId });
+
+  if (error) {
+    if (error.code === "23505") {
+      throw new Error("Ese viajero ya está en este viaje.");
+    }
+    throw new Error(error.message);
+  }
+
+  revalidatePath(`/admin/trips/${tripId}`);
+  revalidatePath("/admin");
+}
+
+export async function removeTraveler(tripId, clientId) {
+  const supabase = await createClient();
+
+  const { error } = await supabase
+    .from("trip_travelers")
+    .delete()
+    .eq("trip_id", tripId)
+    .eq("client_id", clientId);
+
+  if (error) throw new Error(error.message);
+
+  revalidatePath(`/admin/trips/${tripId}`);
+  revalidatePath("/admin");
+}

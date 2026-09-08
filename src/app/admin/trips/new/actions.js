@@ -18,14 +18,24 @@ export async function createTrip(formData) {
     end_date: formData.get("end_date") || null,
   };
 
-  const { data: trips, error } = await supabase
+  // Un solo viaje, sin importar cuántos viajeros lo comparten.
+  const { data: trip, error } = await supabase
     .from("trips")
-    .insert(clientIds.map((client_id) => ({ ...base, client_id })))
-    .select();
+    .insert(base)
+    .select()
+    .single();
 
   if (error) {
     throw new Error(error.message);
   }
 
-  redirect(`/admin/trips/${trips[0].id}`);
+  const { error: travelersError } = await supabase.from("trip_travelers").insert(
+    clientIds.map((client_id) => ({ trip_id: trip.id, client_id }))
+  );
+
+  if (travelersError) {
+    throw new Error(travelersError.message);
+  }
+
+  redirect(`/admin/trips/${trip.id}`);
 }

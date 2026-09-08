@@ -40,8 +40,10 @@ export default function CopyItineraryForm({ sourceTripId, otherTrips }) {
         Copiar este itinerario a otros viajes
       </p>
       <p className="mt-1 text-xs text-zinc-500">
-        Útil cuando varios viajeros hacen el mismo tour: arma el itinerario
-        una sola vez aquí y cópialo a los viajes de los demás.
+        Para agregar viajeros a ESTE mismo viaje usa &quot;Viajeros de este
+        viaje&quot; arriba (verán este mismo itinerario automáticamente). Usa
+        esto solo para reutilizar el itinerario en un viaje distinto (otro
+        grupo, otra fecha).
       </p>
       <div className="mt-3 max-h-40 space-y-2 overflow-y-auto">
         {otherTrips.map((t) => (

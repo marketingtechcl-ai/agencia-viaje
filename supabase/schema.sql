@@ -1,5 +1,8 @@
 -- ESQUEMA DE BASE DE DATOS — Portal de Agencia de Viajes
--- Ejecuta esto en el SQL Editor de tu proyecto de Supabase (una sola vez).
+-- Ejecuta esto en el SQL Editor de tu proyecto de Supabase (una sola vez, en un
+-- proyecto nuevo). Si ya tenías este proyecto corriendo con una versión anterior
+-- de este esquema, no vuelvas a correr este archivo: usa en su lugar el script
+-- de migración correspondiente en supabase/migrations/.
 
 -- 1. Perfiles: extiende la tabla de usuarios de Supabase Auth con un rol.
 create table profiles (
@@ -10,16 +13,23 @@ create table profiles (
   created_at timestamptz default now()
 );
 
--- 2. Viajes/tours: cada viaje pertenece a UN cliente y lo crea el admin.
+-- 2. Viajes/tours: un viaje puede tener uno o varios viajeros (ver trip_travelers).
 create table trips (
   id uuid primary key default gen_random_uuid(),
-  client_id uuid references profiles(id) on delete cascade not null,
   title text not null,
   destination text,
   start_date date,
   end_date date,
   status text not null default 'upcoming' check (status in ('upcoming', 'active', 'completed')),
   created_at timestamptz default now()
+);
+
+-- 2b. Viajeros de cada viaje: tabla puente para que un mismo viaje (mismo
+--     itinerario, mismas fotos) lo puedan ver varios clientes a la vez.
+create table trip_travelers (
+  trip_id uuid references trips(id) on delete cascade not null,
+  client_id uuid references profiles(id) on delete cascade not null,
+  primary key (trip_id, client_id)
 );
 
 -- 3. Itinerario: puntos del itinerario de un viaje, cada uno con fecha/hora.
@@ -36,7 +46,7 @@ create table itinerary_items (
   created_at timestamptz default now()
 );
 
--- 4. Fotos: fotos que el admin sube para un viaje/cliente específico.
+-- 4. Fotos: fotos que el admin sube para un viaje (las ven todos sus viajeros).
 create table trip_photos (
   id uuid primary key default gen_random_uuid(),
   trip_id uuid references trips(id) on delete cascade not null,
@@ -50,6 +60,7 @@ create table trip_photos (
 
 alter table profiles enable row level security;
 alter table trips enable row level security;
+alter table trip_travelers enable row level security;
 alter table itinerary_items enable row level security;
 alter table trip_photos enable row level security;
 
@@ -62,15 +73,34 @@ create policy "Admin ve todos los perfiles" on profiles for select using (
   exists (select 1 from profiles where id = auth.uid() and role = 'admin')
 );
 
--- Trips: el cliente solo ve SUS viajes; el admin ve y gestiona todos.
-create policy "Cliente ve sus viajes" on trips for select using (client_id = auth.uid());
+-- Trip_travelers: cada cliente ve solo sus propias filas (con quién viaja no es
+-- público); el admin gestiona todas (asignar/quitar viajeros de un viaje).
+create policy "Cliente ve sus filas de viajero" on trip_travelers for select using (
+  client_id = auth.uid()
+);
+create policy "Admin gestiona viajeros" on trip_travelers for all using (
+  exists (select 1 from profiles where id = auth.uid() and role = 'admin')
+);
+
+-- Trips: el cliente ve los viajes en los que es viajero; el admin ve y gestiona todos.
+create policy "Cliente ve sus viajes" on trips for select using (
+  exists (
+    select 1 from trip_travelers
+    where trip_travelers.trip_id = trips.id
+      and trip_travelers.client_id = auth.uid()
+  )
+);
 create policy "Admin gestiona todos los viajes" on trips for all using (
   exists (select 1 from profiles where id = auth.uid() and role = 'admin')
 );
 
--- Itinerario: visible si el usuario puede ver el viaje al que pertenece.
+-- Itinerario: visible si el usuario es viajero del viaje al que pertenece.
 create policy "Ver itinerario de mis viajes" on itinerary_items for select using (
-  exists (select 1 from trips where trips.id = itinerary_items.trip_id and trips.client_id = auth.uid())
+  exists (
+    select 1 from trip_travelers
+    where trip_travelers.trip_id = itinerary_items.trip_id
+      and trip_travelers.client_id = auth.uid()
+  )
 );
 create policy "Admin gestiona itinerario" on itinerary_items for all using (
   exists (select 1 from profiles where id = auth.uid() and role = 'admin')
@@ -78,7 +108,11 @@ create policy "Admin gestiona itinerario" on itinerary_items for all using (
 
 -- Fotos: mismo criterio que el itinerario.
 create policy "Ver fotos de mis viajes" on trip_photos for select using (
-  exists (select 1 from trips where trips.id = trip_photos.trip_id and trips.client_id = auth.uid())
+  exists (
+    select 1 from trip_travelers
+    where trip_travelers.trip_id = trip_photos.trip_id
+      and trip_travelers.client_id = auth.uid()
+  )
 );
 create policy "Admin gestiona fotos" on trip_photos for all using (
   exists (select 1 from profiles where id = auth.uid() and role = 'admin')

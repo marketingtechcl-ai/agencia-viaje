@@ -1,5 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import { createTrip } from "./actions";
+import SubmitButton from "./SubmitButton";
 
 export default async function NewTripPage() {
   const supabase = await createClient();
@@ -39,9 +40,9 @@ export default async function NewTripPage() {
             ))}
           </div>
           <p className="mt-1 text-xs text-zinc-500">
-            Elige uno o varios viajeros. Si eliges varios, se crea un viaje
-            independiente para cada uno con los mismos datos. Luego podrás
-            armar el itinerario una sola vez y copiarlo a los demás.
+            Elige uno o varios viajeros. Se crea un único viaje compartido por
+            todos los que marques: arman el itinerario y suben las fotos una
+            sola vez y cada viajero ve exactamente lo mismo en su cuenta.
           </p>
           {!clients?.length && (
             <p className="mt-1 text-xs text-amber-600">
@@ -97,12 +98,7 @@ export default async function NewTripPage() {
           </div>
         </div>
 
-        <button
-          type="submit"
-          className="w-full rounded-lg bg-brand py-2.5 font-medium text-white hover:bg-brand-dark"
-        >
-          Crear viaje
-        </button>
+        <SubmitButton />
       </form>
     </div>
   );

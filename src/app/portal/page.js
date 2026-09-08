@@ -1,14 +1,13 @@
 import { redirect } from "next/navigation";
-import { createClient, getProfile } from "@/lib/supabase/server";
+import { createClient } from "@/lib/supabase/server";
 
 export default async function PortalPage() {
-  const profile = await getProfile();
   const supabase = await createClient();
 
+  // RLS ya limita esto a los viajes del cliente que tiene la sesión abierta.
   const { data: trips } = await supabase
     .from("trips")
     .select("*")
-    .eq("client_id", profile.id)
     .order("start_date", { ascending: false });
 
   // Si solo tiene un viaje, lo llevamos directo a su detalle.

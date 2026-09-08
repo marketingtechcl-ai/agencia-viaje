@@ -6,7 +6,7 @@ export default async function AdminDashboard() {
 
   const { data: trips } = await supabase
     .from("trips")
-    .select("*, profiles:client_id(full_name)")
+    .select("*, trip_travelers(profiles(full_name))")
     .order("start_date", { ascending: true });
 
   return (
@@ -23,24 +23,31 @@ export default async function AdminDashboard() {
 
       <div className="mt-6 divide-y divide-zinc-200 rounded-xl border border-zinc-200 bg-white">
         {trips?.length ? (
-          trips.map((trip) => (
-            <a
-              key={trip.id}
-              href={`/admin/trips/${trip.id}`}
-              className="flex items-center justify-between px-5 py-4 hover:bg-zinc-50"
-            >
-              <div>
-                <p className="font-medium text-zinc-900">{trip.title}</p>
-                <p className="text-sm text-zinc-500">
-                  {trip.profiles?.full_name || "Cliente sin nombre"} ·{" "}
-                  {trip.destination}
-                </p>
-              </div>
-              <span className="rounded-full bg-zinc-100 px-3 py-1 text-xs font-medium capitalize text-zinc-600">
-                {trip.status}
-              </span>
-            </a>
-          ))
+          trips.map((trip) => {
+            const travelerNames =
+              trip.trip_travelers
+                ?.map((t) => t.profiles?.full_name)
+                .filter(Boolean)
+                .join(", ") || "Sin viajero asignado";
+
+            return (
+              <a
+                key={trip.id}
+                href={`/admin/trips/${trip.id}`}
+                className="flex items-center justify-between px-5 py-4 hover:bg-zinc-50"
+              >
+                <div>
+                  <p className="font-medium text-zinc-900">{trip.title}</p>
+                  <p className="text-sm text-zinc-500">
+                    {travelerNames} · {trip.destination}
+                  </p>
+                </div>
+                <span className="rounded-full bg-zinc-100 px-3 py-1 text-xs font-medium capitalize text-zinc-600">
+                  {trip.status}
+                </span>
+              </a>
+            );
+          })
         ) : (
           <p className="px-5 py-8 text-center text-sm text-zinc-500">
             Todavía no has creado ningún viaje.

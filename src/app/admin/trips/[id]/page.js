@@ -3,6 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import ItineraryManager from "./ItineraryManager";
 import PhotoUploader from "./PhotoUploader";
 import CopyItineraryForm from "./CopyItineraryForm";
+import TravelersManager from "./TravelersManager";
 
 export default async function AdminTripPage({ params }) {
   const { id } = await params;
@@ -10,11 +11,30 @@ export default async function AdminTripPage({ params }) {
 
   const { data: trip } = await supabase
     .from("trips")
-    .select("*, profiles:client_id(full_name)")
+    .select("*")
     .eq("id", id)
     .single();
 
   if (!trip) notFound();
+
+  const { data: travelerRows } = await supabase
+    .from("trip_travelers")
+    .select("client_id, profiles(full_name)")
+    .eq("trip_id", id);
+
+  const travelers = (travelerRows || []).map((t) => ({
+    id: t.client_id,
+    name: t.profiles?.full_name || "(sin nombre)",
+  }));
+
+  const { data: allClients } = await supabase
+    .from("profiles")
+    .select("id, full_name")
+    .eq("role", "client")
+    .order("full_name");
+
+  const travelerIds = new Set(travelers.map((t) => t.id));
+  const availableClients = (allClients || []).filter((c) => !travelerIds.has(c.id));
 
   const { data: items } = await supabase
     .from("itinerary_items")
@@ -31,14 +51,18 @@ export default async function AdminTripPage({ params }) {
 
   const { data: otherTripRows } = await supabase
     .from("trips")
-    .select("id, title, profiles:client_id(full_name)")
+    .select("id, title, trip_travelers(profiles(full_name))")
     .neq("id", id)
     .order("title");
 
   const otherTrips = (otherTripRows || []).map((t) => ({
     id: t.id,
     title: t.title,
-    clientName: t.profiles?.full_name || "(sin nombre)",
+    clientName:
+      (t.trip_travelers || [])
+        .map((tt) => tt.profiles?.full_name)
+        .filter(Boolean)
+        .join(", ") || "(sin viajero)",
   }));
 
   const photos = (photoRows || []).map((p) => ({
@@ -46,6 +70,8 @@ export default async function AdminTripPage({ params }) {
     url: supabase.storage.from("trip-photos").getPublicUrl(p.storage_path)
       .data.publicUrl,
   }));
+
+  const travelerNames = travelers.map((t) => t.name).join(", ") || "Sin viajero asignado";
 
   return (
     <div className="mx-auto max-w-3xl">
@@ -56,10 +82,18 @@ export default async function AdminTripPage({ params }) {
         {trip.title}
       </h1>
       <p className="text-zinc-500">
-        {trip.profiles?.full_name} · {trip.destination}
+        {travelerNames} · {trip.destination}
         {trip.start_date &&
           ` · ${trip.start_date} al ${trip.end_date || trip.start_date}`}
       </p>
+
+      <section className="mt-6">
+        <TravelersManager
+          tripId={id}
+          travelers={travelers}
+          availableClients={availableClients}
+        />
+      </section>
 
       <section className="mt-8">
         <h2 className="text-lg font-semibold text-zinc-800">Itinerario</h2>
